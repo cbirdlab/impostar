@@ -4,7 +4,7 @@
 \alias{runAMOVA}
 \title{Run AMOVA}
 \usage{
-runAMOVA(designFile, dataFile, outputFile=NULL, NresamplesToStop=1000, maxPermutations=10000, multi.core = TRUE, do.bootstrap = FALSE, save.distributions = FALSE)
+runAMOVA(designFile, dataFile, outputFile=NULL, NresamplesToStop=1000, maxPermutations=10000, multi.core = TRUE, NGSdata = TRUE, save.distributions = FALSE)
 }
 \arguments{
 \item{designFile}{a data.frame or character string indicating the path to the design file. Required.}
@@ -19,7 +19,7 @@ runAMOVA(designFile, dataFile, outputFile=NULL, NresamplesToStop=1000, maxPermut
 
 \item{multi.core}{a logical or integer indicating the number of cores to use in parallel processing. If FALSE will run on one core. If TRUE (default) will detect OS and use the number of available cores minus 1. If integer will run on specified number of cores. Note that parallel processing not supported by Windows.}
 
-\item{do.bootstrap}{a logical indicating whether the resampling strategy for next-generation sequencing data (TRUE, Default) or Sanger sequencing data (FALSE) should be implemented.}
+\item{NGSdata}{a logical indicating whether the resampling strategy for next-generation sequencing data (TRUE, Default) or Sanger sequencing data (FALSE) should be implemented.}
 
 \item{save.distributions}{a logical indicating if the distributions of the F values during bootstrapping be returned. Note that this might require a very large amount of space.}
 }
@@ -35,7 +35,7 @@ design <- data.frame(n=rep(20,3), Sample=c(1,2,3), Region=c(1,1,2))
 # simulate data file
 simdata <- simulate_data(rep(50, 3), rep(100, 3), rep(0.5, 3), 5, file_name=T)
 # run AMOVA
-AMOVAresults <- runAMOVA(designFile=design, dataFile=simdata, outputFile="AMOVAoutput", NresamplesToStop=10, maxPermutations=100, multi.core = T, do.bootstrap = T)
+AMOVAresults <- runAMOVA(designFile=design, dataFile=simdata, outputFile="AMOVAoutput", NresamplesToStop=10, maxPermutations=100, multi.core = T, NGSdata = T)
 }
 \references{
 Hamner, R.M., J.D. Selwyn, E. Krell, S.A. King, and C.E. Bird. In review. Modeling next-generation sequencer sampling error in pooled population samples dramatically reduces false positives in genetic structure tests.

@@ -4,7 +4,7 @@
 \alias{runLogRegTest}
 \title{Logistic Regression Test}
 \usage{
-runLogRegTest(dataFile, OutputBase=NULL, mainDirectory=getwd(), NumBS=1000, ModelSeqSampErrSwitch=T, nCores=NULL)
+runLogRegTest(dataFile, OutputBase=NULL, mainDirectory=getwd(), NumBS=1000, NGSdata=T, nCores=NULL)
 }
 \arguments{
 \item{dataFile}{a data.frame or character string indicating the path to the csv file. Required. Each row is a SNP with a unique snpID, and columns represent the total number of alleles (2n, TotAlleles), read depth (DP), reference alleles (RefAl), alternate alleles (AltAl), reference reads (RD), and alternate reads (AD) per pool (as indicated by the number in the column names). Use simulate_data to generate an example and view required format. Required.}
@@ -15,7 +15,7 @@ runLogRegTest(dataFile, OutputBase=NULL, mainDirectory=getwd(), NumBS=1000, Mode
 
 \item{NumBS}{An integer >=2 indicating the number of bootstrap iterations to perform. Default is 10000.}
 
-\item{ModelSeqSampErrSwitch}{A logical indicating whether the resampling strategy for next-generation sequencing data (TRUE, Default) or Sanger sequencing data (FALSE) should be implemented.}
+\item{NGSdata}{A logical indicating whether the resampling strategy for next-generation sequencing data (TRUE, Default) or Sanger sequencing data (FALSE) should be implemented.}
 
 \item{nCores}{An integer indicating the number of cores to use in parallel processing, or NULL (default) to use the maximum available cores minus 1. Note that parallel processing not supported by Windows.}
 }
@@ -29,7 +29,7 @@ This function performs a binomial logistic regression test for a genetic cline a
 # simulate data file
 dataFile <- simulate_data(rep(50, 3), rep(100, 3), rep(0.5, 3), 5, file_name=T)
 # run logistic regression test
-LogRegResults <- runLogRegTest(dataFile, OutputBase=NULL, mainDirectory=getwd(), NumBS=10, ModelSeqSampErrSwitch=T, nCores=NULL)
+LogRegResults <- runLogRegTest(dataFile, OutputBase=NULL, mainDirectory=getwd(), NumBS=10, NGSdata=T, nCores=NULL)
 }
 \references{
 Hamner, R.M., J.D. Selwyn, E. Krell, S.A. King, and C.E. Bird. In review. Modeling next-generation sequencer sampling error in pooled population samples dramatically reduces false positives in genetic structure tests.
