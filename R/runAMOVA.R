@@ -8,7 +8,7 @@
 #' @param NresamplesToStop an integer indicating the number of iterations to complete, after which resampling will stop if resampled F >= observed F. Default = 1000.
 #' @param maxPermutations an integer indicating the maximum number of iterations to complete. Default = 10000
 #' @param multi.core a logical or integer indicating the number of cores to use in parallel processing. If FALSE will run on one core. If TRUE (default) will detect OS and use the number of available cores minus 1. If integer will run on specified number of cores. Note that parallel processing not supported by Windows.
-#' @param do.bootstrap a logical indicating whether the resampling strategy for next-generation sequencing data (TRUE, Default) or Sanger sequencing data (FALSE) should be implemented.
+#' @param NGSdata a logical indicating whether the resampling strategy for next-generation sequencing data (TRUE, Default) or Sanger sequencing data (FALSE) should be implemented.
 #' @param save.distributions a logical indicating if the distributions of the F values during bootstrapping be returned. Note that this might require a very large amount of space.
 #' @return The runAMOVA function returns a list and optional .rds file written to the working directory. Each list element contains the AMOVA table for one SNP, in the same order as the input file.
 #' @author  Scott A. King, Christopher E. Bird, Rebecca M. Hamner, Jason D. Selwyn, Evan Krell
@@ -16,7 +16,7 @@
 #' @seealso \code{\link{simulate_data}}, \code{\link{runLogRegTest}}
 #' @examples
 #' # create design file
-#' design <- data.frame(n=rep(20,3), Sample=c(1,2,3), Region=c(1,1,2))
+#' design <- data.frame(n=rep(20,3), Sample=c(1,2,3))
 #' # simulate data file
 #' simdata <- simulate_data(rep(50, 3), rep(100, 3), rep(0.5, 3), 5, file_name=T)
 #' # run AMOVA
@@ -30,11 +30,12 @@ runAMOVA <- function(
   NresamplesToStop=1000,      # optional user input, an integer indicating the number of iterations to complete, after which resampling will stop if resampled F >= observed F. Default = 1000.
   maxPermutations=10000,      # an integer indicating the maximum number of iterations to complete. Default = 10000
   multi.core = TRUE,          # a logical or integer indicating the number of cores to use in parallel processing. If FALSE will run on one core. If TRUE will detect OS and use the number of available cores minus 1. If integer will run on specified number of cores. Note that parallel processing not supported by Windows.
-  do.bootstrap = TRUE,        # a logical indicating whether the resampling strategy for next-generation sequencing data (TRUE, Default) or Sanger sequencing data (FALSE) should be implemented.
+  NGSdata = TRUE,        # a logical indicating whether the resampling strategy for next-generation sequencing data (TRUE, Default) or Sanger sequencing data (FALSE) should be implemented.
   save.distributions = FALSE  # a logical indicating if the distributions of the F values during bootstrapping be returned. Note that this might require a very large amount of space.
 )
 {
   sfw.version <- " 1.04 - 3 June 2017"
+  do.bootstrap <- NGSdata
   # force evaluation so won't have issues when sending to other nodes in a cluser!
   force(NresamplesToStop)
   force(maxPermutations)

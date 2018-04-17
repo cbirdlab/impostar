@@ -1,12 +1,12 @@
 #' Logistic Regression Test
 #'
 #' @description This function performs a binomial logistic regression test for a genetic cline among three populations, implementing the appropriate resampling strategies to model the total sampling error associated with either Sanger sequencing (population sampling error) or next-generation sequencing (population + sequencer sampling error).
-#' @usage runLogRegTest(dataFile, OutputBase=NULL, mainDirectory=getwd(), NumBS=1000, ModelSeqSampErrSwitch=T, nCores=NULL)
+#' @usage runLogRegTest(dataFile, OutputBase=NULL, mainDirectory=getwd(), NumBS=1000, NGSdata=T, nCores=NULL)
 #' @param dataFile a data.frame or character string indicating the path to the csv file. Required. Each row is a SNP with a unique snpID, and columns represent the total number of alleles (2n, TotAlleles), read depth (DP), reference alleles (RefAl), alternate alleles (AltAl), reference reads (RD), and alternate reads (AD) per pool (as indicated by the number in the column names). Use simulate_data to generate an example and view required format. Required.
 #' @param OutputBase  A character string indicating the base of the output filename, to which the number of bootstraps and if ModelSeqSampError was incorporated (ResampReads) will be appended. If NULL (default) then no output file is written.
 #' @param mainDirectory A character string indicating the working directory to use for input and optional output files. Default is getwd().
 #' @param NumBS An integer >=2 indicating the number of bootstrap iterations to perform. Default is 10000.
-#' @param ModelSeqSampErrSwitch A logical indicating whether the resampling strategy for next-generation sequencing data (TRUE, Default) or Sanger sequencing data (FALSE) should be implemented.
+#' @param NGSdata A logical indicating whether the resampling strategy for next-generation sequencing data (TRUE, Default) or Sanger sequencing data (FALSE) should be implemented.
 #' @param nCores An integer indicating the number of cores to use in parallel processing, or NULL (default) to use the maximum available cores minus 1. Note that parallel processing not supported by Windows.
 #' @return The runLogRegTest function returns a dataframe and optional csv file written to the working directory. Each row is a SNP, where ObsSlope refers to the observed rate of change in the log odds ratio of the logistic regression line, and SlopeP is used to evaluate its significance.
 #' @author  Rebecca M. Hamner, Jason D. Selwyn, Evan Krell, Scott A. King, Christopher E. Bird
@@ -18,14 +18,14 @@
 #' # simulate data file
 #' dataFile <- simulate_data(rep(50, 3), rep(100, 3), rep(0.5, 3), 5, file_name=T)
 #' # run logistic regression test
-#' LogRegResults <- runLogRegTest(dataFile, OutputBase=NULL, mainDirectory=getwd(), NumBS=10, ModelSeqSampErrSwitch=T, nCores=NULL)
+#' LogRegResults <- runLogRegTest(dataFile, OutputBase=NULL, mainDirectory=getwd(), NumBS=10, NGSdata=T, nCores=NULL)
 #' @export
-runLogRegTest <- function(dataFile, OutputBase=NULL, mainDirectory=getwd(), NumBS=10000, ModelSeqSampErrSwitch=T, nCores=NULL){
+runLogRegTest <- function(dataFile, OutputBase=NULL, mainDirectory=getwd(), NumBS=10000, NGSdata=T, nCores=NULL){
   # dataFile:	a dataframe where each row is a SNP with a unique snpID, and columns represent the total number of alleles (2n, TotAlleles), read depth (DP), reference alleles (RefAl), alternate alleles (AltAl), reference reads (RD), and alternate reads (AD) per pool (as indicated by the number in the column names). Use simulate_data to generate an example and view required format.
   # OutputBase:	 a character string indicating the base of the output filename, to which the number of bootstraps and if ModelSeqSampError was incorporated (ResampReads) will be appended. If NULL (default) then no output file is written.
   # mainDirectory: a character string indicating the working directory to use for input and optional output files. Default is getwd().
   # NumBS:	an integer >=2 indicating the number of bootstrap iterations to perform.
-  # ModelSeqSampErrSwitch: 	a logical indicating whether the resampling strategy for next-generation sequencing data (TRUE, Default) or Sanger sequencing data (FALSE) should be implemented.
+  # NGSdata: 	a logical indicating whether the resampling strategy for next-generation sequencing data (TRUE, Default) or Sanger sequencing data (FALSE) should be implemented.
   # nCores:	an integer indicating the number of cores to use in parallel processing, or NULL (default) to use the maximum available cores minus 1. Note that parallel processing not supported by Windows.
 
   ################################
@@ -34,7 +34,7 @@ runLogRegTest <- function(dataFile, OutputBase=NULL, mainDirectory=getwd(), NumB
   # SET number of iterations to run
   nBS <- NumBS
 
-  ModelSeqSampErr<-ModelSeqSampErrSwitch
+  ModelSeqSampErr<-NGSdata
 
   # Turn on (TRUE) or off (FALSE) boostrap to model sequencer sampling error
   if(ModelSeqSampErr==TRUE) {ResampYN <- "ResampReads_"} else {ResampYN <- "noResampReads_"}
@@ -259,20 +259,20 @@ runLogRegTest <- function(dataFile, OutputBase=NULL, mainDirectory=getwd(), NumB
 
   # Run Allelotyper
   SNPsetFreq <- Allelotyper(SNPset)
-  print(head(SNPsetFreq))
+  #print(head(SNPsetFreq))
 
   # Run Function LogisticRegLogisticRegScratch
   TempResults <-  lapply(1:nrow(SNPsetFreq), LogisticRegScratch, x=SNPsetFreq)
   SNPsetFreqSlope <- SNPsetFreq
   SNPsetFreqSlope$ObsSlope <- unlist(TempResults)
   SNPsetFreqSlope$AbsSlope <- abs(SNPsetFreqSlope$ObsSlope)
-  head(SNPsetFreqSlope)
+  #head(SNPsetFreqSlope)
 
   # Rename columns to avoid overwriting later
   names(SNPsetFreqSlope) <- gsub("AbsSlope", "ObsAbsSlope", names(SNPsetFreqSlope))
   names(SNPsetFreqSlope) <- gsub("Ref", "ObsRef", names(SNPsetFreqSlope))
   names(SNPsetFreqSlope) <- gsub("Alt", "ObsAlt", names(SNPsetFreqSlope))
-  print(head(SNPsetFreqSlope))
+  #print(head(SNPsetFreqSlope))
 
   # Create subset to send through BootStrapper (to avoid maxing out memory)
   colsToKeep <- c("snpID", "^ObsRefAlleles", "^TotAlleles", "^DP", "^RD", "ObsAbsSlope", "Obsuared")
