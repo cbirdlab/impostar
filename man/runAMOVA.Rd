@@ -4,7 +4,7 @@
 \alias{runAMOVA}
 \title{Run AMOVA}
 \usage{
-runAMOVA(designFile, dataFile, outputFile=NULL, NresamplesToStop=1000, maxPermutations=100000, multi.core = TRUE, do.bootstrap = FALSE, save.distributions = FALSE)
+runAMOVA(designFile, dataFile, outputFile=NULL, NresamplesToStop=1000, maxPermutations=10000, multi.core = TRUE, do.bootstrap = FALSE, save.distributions = FALSE)
 }
 \arguments{
 \item{designFile}{a data.frame or character string indicating the path to the design file. Required.}
@@ -27,17 +27,15 @@ runAMOVA(designFile, dataFile, outputFile=NULL, NresamplesToStop=1000, maxPermut
 The runAMOVA function returns a list and optional .rds file written to the working directory. Each list element contains the AMOVA table for one SNP, in the same order as the input file.
 }
 \description{
-This function performs an analysis of molecular variance (AMOVA) test for genetic structure, implementing the appropriate resampling strategies to model the total sampling error associated with either Sanger sequencing (population sampling error) or next-generation sequencing (population + sequencer sampling error). The current implementation works with no missing data and one level of population structure.
+This function performs an analysis of molecular variance (AMOVA) test for genetic structure, implementing the appropriate resampling strategies to model the total sampling error associated with either Sanger sequencing (population sampling error) or next-generation sequencing (population + sequencer sampling error). The current implementation works with pooled data, no missing data and one level of population structure.
 }
 \examples{
-# create example design file
+# create design file
 design <- data.frame(n=rep(20,3), Sample=c(1,2,3), Region=c(1,1,2))
-# create example data file
-simdata <- simulate_data(rep(50, 3), rep(100, 3), rep(0.5, 3), 1000, file_name=T)
-# run AMOVA with default options
-AMOVAresults <- runAMOVA(designFile=design, dataFile=simdata)
-# run AMOVA setting options
-AMOVAresults <- runAMOVA(designFile=design, dataFile=simdata, outputFile="AMOVAoutput", NresamplesToStop=1000, maxPermutations=10000, multi.core = T, do.bootstrap = T)
+# simulate data file
+simdata <- simulate_data(rep(50, 3), rep(100, 3), rep(0.5, 3), 5, file_name=T)
+# run AMOVA
+AMOVAresults <- runAMOVA(designFile=design, dataFile=simdata, outputFile="AMOVAoutput", NresamplesToStop=10, maxPermutations=100, multi.core = T, do.bootstrap = T)
 }
 \references{
 Hamner, R.M., J.D. Selwyn, E. Krell, S.A. King, and C.E. Bird. In review. Modeling next-generation sequencer sampling error in pooled population samples dramatically reduces false positives in genetic structure tests.
@@ -48,9 +46,3 @@ Hamner, R.M., J.D. Selwyn, E. Krell, S.A. King, and C.E. Bird. In review. Modeli
 \author{
 Scott A. King, Christopher E. Bird, Rebecca M. Hamner, Jason D. Selwyn, Evan Krell
 }
-\keyword{AMOVA,}
-\keyword{SNPs}
-\keyword{next-generation}
-\keyword{population}
-\keyword{sequencing,}
-\keyword{structure,}

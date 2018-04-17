@@ -3,6 +3,7 @@
 export(runAMOVA)
 export(runLogRegTest)
 export(simulate_data)
+export(vcf2impostar)
 import(Rcpp)
 import(VariantAnnotation)
 import(dplyr)
