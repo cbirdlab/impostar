@@ -25,7 +25,8 @@
 #' # simulate data file
 #' simdata <- simulate_data(rep(50, 3), rep(100, 3), rep(0.5, 3), 5, file_name=FALSE)
 #' # run AMOVA
-#' AMOVAresults <- runAMOVA(designFile=design, dataFile=simdata, outputFile="AMOVAoutput", NresamplesToStop=10, maxPermutations=100, multi.core = T, do.bootstrap = T)
+#' AMOVAresults <- runAMOVA(designFile=design, dataFile=simdata, NresamplesToStop=10, 
+#' maxPermutations=100, multi.core = T, do.bootstrap = T)
 #' @import Rcpp VariantAnnotation parallel
 #' @export
 ##
@@ -44,7 +45,7 @@ runAMOVA <- function(
   multi.node = FALSE                # use multiple nodes (message passing)
 )
 {
-sfw.version <- " 1.04 - 3 June 2017"
+sfw.version <- " 1.05 - 17 Sept 2018"
 permcntsToReportOn <- 10^(1:20)
   # force evaluation so won't have issues when sending to other nodes in a cluser!
   force(NresamplesToStop)
