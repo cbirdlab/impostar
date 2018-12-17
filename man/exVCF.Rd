@@ -4,7 +4,7 @@
 \name{exVCF}
 \alias{exVCF}
 \title{This is example VCF data}
-\format{An object of class \code{CollapsedVCF} with 5 rows and 6 columns.}
+\format{An object of class \code{CollapsedVCF} with 5 rows and 3 columns.}
 \usage{
 exVCF
 }

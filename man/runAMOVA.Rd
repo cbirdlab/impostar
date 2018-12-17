@@ -4,24 +4,34 @@
 \alias{runAMOVA}
 \title{Run AMOVA}
 \usage{
-runAMOVA(designFile, dataFile, outputFile=NULL, NresamplesToStop=1000, maxPermutations=10000, multi.core = TRUE, NGSdata = TRUE, save.distributions = FALSE)
+runAMOVA(designFile, dataFile, outputFile=NULL, NresamplesToStop=1000, maxPermutations=10000, multi.core = TRUE, do.bootstrap = FALSE, save.distributions = FALSE)
 }
 \arguments{
-\item{designFile}{a data.frame or character string indicating the path to the design file. Required.}
+\item{designFile}{a data.frame or character string indicating the path to the experimental design file. Required.}
 
 \item{dataFile}{a data.frame or character string indicating the path to the data file. Required.}
 
-\item{outputFile}{a character string indicating the name of the optional .rds output file written to working directory. If NULL (default), output is only retained as an R object. Note that writing large .rds files will increase time to completion.}
-
 \item{NresamplesToStop}{an integer indicating the number of iterations to complete, after which resampling will stop if resampled F >= observed F. Default = 1000.}
+
+\item{ploidy}{an integer indicating the ploidy}
 
 \item{maxPermutations}{an integer indicating the maximum number of iterations to complete. Default = 10000}
 
+\item{permutationMethod}{a string that determines the method of shuffling.  "exact" is Fisher's exact permutation method and should be used in most cases.  "freely" will freely shuffle the smallest units of observation. "bird" is an experimental combination of exact and freely, "rexact" is an experimental bootstrapping procedure that should not be used}
+
 \item{multi.core}{a logical or integer indicating the number of cores to use in parallel processing. If FALSE will run on one core. If TRUE (default) will detect OS and use the number of available cores minus 1. If integer will run on specified number of cores. Note that parallel processing not supported by Windows.}
 
-\item{NGSdata}{a logical indicating whether the resampling strategy for next-generation sequencing data (TRUE, Default) or Sanger sequencing data (FALSE) should be implemented.}
+\item{preshuffle}{a logical that uses same shuffling in permutation tests for each SNP, such that permutation results can be combined across loci}
+
+\item{do.bootstrap}{a logical that determines whether sequencer sampling error (uncertainty in genotype calls) is modelled by bootstrapping the reads in each permutation in the permutation test.  not to be confused with the "rexact" shuffle method}
 
 \item{save.distributions}{a logical indicating if the distributions of the F values during bootstrapping be returned. Note that this might require a very large amount of space.}
+
+\item{multi.node}{a logical that must be set to FALSE (in devel)}
+
+\item{outputFile}{a character string indicating the name of the optional .rds output file written to working directory. If NULL (default), output is only retained as an R object. Note that writing large .rds files will increase time to completion.}
+
+\item{NGSdata}{a logical indicating whether the resampling strategy for next-generation sequencing data (TRUE, Default) or Sanger sequencing data (FALSE) should be implemented.}
 }
 \value{
 The runAMOVA function returns a list and optional .rds file written to the working directory. Each list element contains the AMOVA table for one SNP, in the same order as the input file.
@@ -31,11 +41,11 @@ This function performs an analysis of molecular variance (AMOVA) test for geneti
 }
 \examples{
 # create design file
-design <- data.frame(n=rep(20,3), Sample=c(1,2,3), Region=c(1,1,2))
+design <- data.frame(n=rep(20,3), Sample=c(1,2,3))
 # simulate data file
-simdata <- simulate_data(rep(50, 3), rep(100, 3), rep(0.5, 3), 5, file_name=T)
+simdata <- simulate_data(rep(50, 3), rep(100, 3), rep(0.5, 3), 5, file_name=FALSE)
 # run AMOVA
-AMOVAresults <- runAMOVA(designFile=design, dataFile=simdata, outputFile="AMOVAoutput", NresamplesToStop=10, maxPermutations=100, multi.core = T, NGSdata = T)
+AMOVAresults <- runAMOVA(designFile=design, dataFile=simdata, outputFile="AMOVAoutput", NresamplesToStop=10, maxPermutations=100, multi.core = T, do.bootstrap = T)
 }
 \references{
 Hamner, R.M., J.D. Selwyn, E. Krell, S.A. King, and C.E. Bird. In review. Modeling next-generation sequencer sampling error in pooled population samples dramatically reduces false positives in genetic structure tests.
