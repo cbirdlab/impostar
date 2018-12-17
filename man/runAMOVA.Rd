@@ -45,7 +45,8 @@ design <- data.frame(n=rep(20,3), Sample=c(1,2,3))
 # simulate data file
 simdata <- simulate_data(rep(50, 3), rep(100, 3), rep(0.5, 3), 5, file_name=FALSE)
 # run AMOVA
-AMOVAresults <- runAMOVA(designFile=design, dataFile=simdata, outputFile="AMOVAoutput", NresamplesToStop=10, maxPermutations=100, multi.core = T, do.bootstrap = T)
+AMOVAresults <- runAMOVA(designFile=design, dataFile=simdata, NresamplesToStop=10, 
+maxPermutations=100, multi.core = T, do.bootstrap = T)
 }
 \references{
 Hamner, R.M., J.D. Selwyn, E. Krell, S.A. King, and C.E. Bird. In review. Modeling next-generation sequencer sampling error in pooled population samples dramatically reduces false positives in genetic structure tests.
